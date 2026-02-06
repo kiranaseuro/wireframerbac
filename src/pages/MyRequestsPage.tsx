@@ -7,7 +7,21 @@ export default function MyRequestsPage() {
   const mockData = useAuthStore((state) => state.mockData)
   const user = useAuthStore((state) => state.user)
 
-  const myRequests = mockData.requests.filter((r) => r.requesterEmail === user?.email)
+  // Wait for user to be loaded before filtering
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">My Requests</h1>
+          <p className="text-muted-foreground">
+            Loading your requests...
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const myRequests = mockData.requests.filter((r) => r.requesterEmail === user.email)
 
   return (
     <div className="space-y-6">
