@@ -16,11 +16,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Crown,
-  Building2,
   ShieldCheck,
   Edit,
   Copy,
-  Trash2,
   MoreVertical,
   Download,
   Settings

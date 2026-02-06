@@ -18,7 +18,6 @@ import {
   Edit,
   Trash2,
   Download,
-  Upload,
   CheckCircle2,
   XCircle,
   Search,
@@ -27,7 +26,6 @@ import {
   Building2,
   Database,
   FileText,
-  Settings,
   Activity
 } from 'lucide-react';
 

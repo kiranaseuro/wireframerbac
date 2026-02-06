@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import {
   Shield,
   Users,
@@ -18,17 +17,13 @@ import {
   TrendingUp,
   TrendingDown,
   Lock,
-  Unlock,
   CheckCircle2,
-  XCircle,
   Clock,
   Database,
   Server,
   Settings,
   FileText,
   BarChart3,
-  UserPlus,
-  UserX,
   RefreshCw,
   Download
 } from 'lucide-react';

@@ -15,6 +15,7 @@ export interface User {
   managerId?: string
   location: string
   employeeId: string
+  phone?: string
   status: UserStatus
   userRole: UserRole
   createdAt: Date
@@ -48,7 +49,7 @@ export interface Role {
 }
 
 // Permission Types
-export type PermissionType = "create" | "read" | "update" | "delete" | "approve" | "execute" | "admin"
+export type PermissionType = "read" | "write" | "delete" | "execute" | "create" | "update" | "approve" | "admin"
 export type DataClassification = "public" | "internal" | "confidential" | "restricted"
 
 export interface Permission {

@@ -25,7 +25,7 @@ export const useAuthStore = create<AuthState>()(
         set({ mockData })
       },
 
-      login: async (email: string, password: string) => {
+      login: async (email: string, _password: string) => {
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 500))
 

@@ -19,8 +19,7 @@ import {
   CheckCircle2,
   Shield,
   Users,
-  Activity,
-  Filter
+  Activity
 } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 
