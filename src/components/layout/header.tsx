@@ -1,7 +1,6 @@
-import { Bell, LogOut, User as UserIcon, RefreshCw } from "lucide-react"
+import { Bell, User as UserIcon } from "lucide-react"
 import { useAuthStore } from "@/stores/auth-store"
 import { useNotificationStore } from "@/stores/notification-store"
-import { useNavigate } from "react-router-dom"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,28 +10,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { getInitials, formatRelativeTime } from "@/lib/utils"
-import { demoUsers } from "@/lib/mock-data"
 
 export default function Header() {
   const user = useAuthStore((state) => state.user)
-  const logout = useAuthStore((state) => state.logout)
-  const switchRole = useAuthStore((state) => state.switchRole)
   const notifications = useNotificationStore((state) => state.notifications)
   const unreadCount = useNotificationStore((state) => state.unreadCount)
   const markAsRead = useNotificationStore((state) => state.markAsRead)
-  const navigate = useNavigate()
 
   if (!user) return null
-
-  const handleLogout = () => {
-    logout()
-    navigate("/login")
-  }
 
   const roleLabels: Record<string, string> = {
     user: "End User",
@@ -53,38 +41,6 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Role Switcher for Demo */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <RefreshCw className="h-4 w-4" />
-              Switch Role
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>Demo Personas</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuRadioGroup
-              value={user.userRole}
-              onValueChange={(value) => switchRole(value as any)}
-            >
-              {demoUsers.map((demoUser) => (
-                <DropdownMenuRadioItem
-                  key={demoUser.id}
-                  value={demoUser.userRole}
-                >
-                  <div className="flex flex-col">
-                    <span>{demoUser.fullName}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {roleLabels[demoUser.userRole]}
-                    </span>
-                  </div>
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -158,11 +114,6 @@ export default function Header() {
             <DropdownMenuItem>
               <UserIcon className="mr-2 h-4 w-4" />
               Profile
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

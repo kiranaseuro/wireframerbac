@@ -4,7 +4,6 @@ import { useAuthStore } from "./stores/auth-store"
 import { useNotificationStore } from "./stores/notification-store"
 
 // Pages
-import LoginPage from "./pages/LoginPage"
 import DashboardPage from "./pages/DashboardPage"
 import MyAccessPage from "./pages/MyAccessPage"
 import RequestAccessPage from "./pages/RequestAccessPage"
@@ -26,17 +25,12 @@ import GroupMappingPage from "./pages/GroupMappingPage"
 import AppLayout from "./components/layout/app-layout"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
   return <>{children}</>
 }
 
 function App() {
   const initializeData = useAuthStore((state) => state.initializeData)
+  const autoLogin = useAuthStore((state) => state.autoLogin)
   const initializeNotifications = useNotificationStore(
     (state) => state.initializeNotifications
   )
@@ -44,12 +38,13 @@ function App() {
   useEffect(() => {
     initializeData()
     initializeNotifications()
-  }, [initializeData, initializeNotifications])
+    // Auto-login as alice.admin@fmg.com (super admin)
+    autoLogin()
+  }, [initializeData, initializeNotifications, autoLogin])
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
         <Route
           path="/"
           element={

@@ -11,6 +11,7 @@ interface AuthState {
   logout: () => void
   switchRole: (role: UserRole) => void
   initializeData: () => void
+  autoLogin: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -59,6 +60,17 @@ export const useAuthStore = create<AuthState>()(
         if (demoUser) {
           set({
             user: { ...demoUser, lastLogin: new Date() },
+          })
+        }
+      },
+
+      autoLogin: () => {
+        // Auto-login as alice.admin@fmg.com (super admin) to access all sections
+        const superAdmin = demoUsers.find((u) => u.email === "alice.admin@fmg.com")
+        if (superAdmin) {
+          set({
+            user: { ...superAdmin, lastLogin: new Date() },
+            isAuthenticated: true,
           })
         }
       },
