@@ -68,7 +68,7 @@ export default function GroupsPage() {
     if (searchQuery) {
       filtered = filtered.filter((g) =>
         g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        g.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        g.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (g.mappedRoleName && g.mappedRoleName.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     }

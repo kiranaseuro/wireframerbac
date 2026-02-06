@@ -128,7 +128,7 @@ export interface Group {
 }
 
 // Audit Log Types
-export type AuditEventType = "authentication" | "authorization" | "role_change" | "permission_change" | "admin_action" | "access_request" | "approval"
+export type AuditEventType = "authentication" | "authorization" | "role_change" | "permission_change" | "admin_action" | "access_request" | "approval" | "login" | "logout" | "access_granted" | "access_denied" | "role_modified" | "permission_granted" | "user_created"
 export type AuditResult = "success" | "failure"
 
 export interface AuditLog {

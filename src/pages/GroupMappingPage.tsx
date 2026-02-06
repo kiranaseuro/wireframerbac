@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Shield,
@@ -37,7 +36,7 @@ interface GroupMapping {
 }
 
 export default function GroupMappingPage() {
-  const [mappings, setMappings] = useState<GroupMapping[]>([
+  const [mappings] = useState<GroupMapping[]>([
     {
       id: '1',
       adGroup: 'Domain Admins',
@@ -119,8 +118,6 @@ export default function GroupMappingPage() {
       status: 'active'
     }
   ]);
-
-  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Available AD groups (not yet mapped)
   const availableADGroups = [
@@ -325,7 +322,6 @@ export default function GroupMappingPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setEditingId(mapping.id)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
