@@ -1,4 +1,4 @@
-import { Bell, User as UserIcon } from "lucide-react"
+import { Bell, User as UserIcon, Settings } from "lucide-react"
 import { useAuthStore } from "@/stores/auth-store"
 import { useNotificationStore } from "@/stores/notification-store"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -13,8 +13,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { getInitials, formatRelativeTime } from "@/lib/utils"
+import { useNavigate } from "react-router-dom"
 
 export default function Header() {
+  const navigate = useNavigate()
   const user = useAuthStore((state) => state.user)
   const notifications = useNotificationStore((state) => state.notifications)
   const unreadCount = useNotificationStore((state) => state.unreadCount)
@@ -36,7 +38,7 @@ export default function Header() {
   return (
     <header className="flex h-16 items-center justify-between border-b bg-card px-6">
       <div className="flex items-center gap-4">
-        <h2 className="text-lg font-semibold">Welcome, {user.firstName}!</h2>
+        <h2 className="text-lg font-semibold text-foreground">Welcome, {user.firstName}!</h2>
         <Badge variant="secondary">{roleLabels[user.userRole]}</Badge>
       </div>
 
@@ -47,7 +49,7 @@ export default function Header() {
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               {unreadCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-destructive-foreground">
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
                   {unreadCount}
                 </span>
               )}
@@ -81,7 +83,7 @@ export default function Header() {
                         </p>
                       </div>
                       {!notification.isRead && (
-                        <div className="h-2 w-2 rounded-full bg-primary" />
+                        <div className="h-2 w-2 rounded-full bg-foreground" />
                       )}
                     </div>
                   </div>
@@ -111,6 +113,10 @@ export default function Header() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate("/notification-settings")}>
+              <Settings className="mr-2 h-4 w-4" />
+              Notification Settings
+            </DropdownMenuItem>
             <DropdownMenuItem>
               <UserIcon className="mr-2 h-4 w-4" />
               Profile

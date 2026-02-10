@@ -15,6 +15,7 @@ import PermissionsPage from "./pages/PermissionsPage"
 import GroupsPage from "./pages/GroupsPage"
 import AuditLogsPage from "./pages/AuditLogsPage"
 import ReportsPage from "./pages/ReportsPage"
+import NotificationSettingsPage from "./pages/NotificationSettingsPage"
 // New Wireframe Pages
 import ADSyncPage from "./pages/ADSyncPage"
 import PermissionDetailPage from "./pages/PermissionDetailPage"
@@ -65,6 +66,7 @@ function App() {
           <Route path="groups" element={<GroupsPage />} />
           <Route path="audit-logs" element={<AuditLogsPage />} />
           <Route path="reports" element={<ReportsPage />} />
+          <Route path="notification-settings" element={<NotificationSettingsPage />} />
           {/* New Wireframe Routes */}
           <Route path="ad-sync" element={<ADSyncPage />} />
           <Route path="permission-detail" element={<PermissionDetailPage />} />

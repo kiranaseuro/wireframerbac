@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Shield,
@@ -346,22 +347,30 @@ export default function GroupMappingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Active Directory Group</Label>
-              <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background">
-                <option value="">Select AD Group...</option>
-                {availableADGroups.map((group, index) => (
-                  <option key={index} value={group}>{group}</option>
-                ))}
-              </select>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select AD Group..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableADGroups.map((group, index) => (
+                    <SelectItem key={index} value={group}>{group}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
               <Label>RBAC Role</Label>
-              <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background">
-                <option value="">Select Role...</option>
-                {availableRoles.map((role, index) => (
-                  <option key={index} value={role}>{role}</option>
-                ))}
-              </select>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Role..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableRoles.map((role, index) => (
+                    <SelectItem key={index} value={role}>{role}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-end">

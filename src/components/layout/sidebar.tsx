@@ -127,7 +127,7 @@ export default function Sidebar() {
   return (
     <div className="flex h-full w-64 flex-col border-r bg-card">
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-primary">FMG RBAC</h1>
+        <h1 className="text-2xl font-bold text-foreground">FMG RBAC</h1>
         <p className="text-sm text-muted-foreground">Access Control System</p>
       </div>
 
@@ -142,7 +142,7 @@ export default function Sidebar() {
                 cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-accent text-accent-foreground"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )
               }

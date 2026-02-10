@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 import {
   Search,
   UserPlus,
@@ -33,6 +36,22 @@ export default function UsersPage() {
   const [filterRole, setFilterRole] = useState("all")
   const [filterStatus, setFilterStatus] = useState("all")
   const [activeTab, setActiveTab] = useState("all")
+
+  // Dialog states
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false)
+
+  // Form state for Add User
+  const [newUser, setNewUser] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    department: "",
+    title: "",
+    userRole: "end_user",
+    status: "active"
+  })
 
   // Get unique departments and roles
   const departments = ["all", ...Array.from(new Set(mockData.users.map((u) => u.department)))]
@@ -98,21 +117,21 @@ export default function UsersPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green-500/10 text-green-600 border-green-200"
+        return "bg-muted text-foreground border"
       case "inactive":
         return "bg-gray-500/10 text-gray-600 border-gray-200"
       case "suspended":
-        return "bg-red-500/10 text-red-600 border-red-200"
+        return "bg-muted text-foreground border"
       default:
         return "bg-gray-500/10 text-gray-600 border-gray-200"
     }
   }
 
   const getRoleColor = (role: string) => {
-    if (role === "super_admin") return "bg-red-500/10 text-red-600 border-red-200"
-    if (role.includes("admin")) return "bg-purple-500/10 text-purple-600 border-purple-200"
-    if (role === "manager") return "bg-blue-500/10 text-blue-600 border-blue-200"
-    if (role === "auditor" || role === "audit_viewer") return "bg-orange-500/10 text-orange-600 border-orange-200"
+    if (role === "super_admin") return "bg-muted text-foreground border"
+    if (role.includes("admin")) return "bg-muted text-foreground border"
+    if (role === "manager") return "bg-muted text-foreground border"
+    if (role === "auditor" || role === "audit_viewer") return "bg-muted text-foreground border"
     return "bg-gray-500/10 text-gray-600 border-gray-200"
   }
 
@@ -121,7 +140,7 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold tracking-tight    text-foreground">
             User Management
           </h1>
           <p className="text-lg text-muted-foreground">
@@ -129,11 +148,37 @@ export default function UsersPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" size="lg">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => {
+              // Export users to CSV
+              const csv = [
+                ["Name", "Email", "Department", "Title", "Role", "Status"].join(","),
+                ...filteredUsers.map(u => [
+                  u.fullName,
+                  u.email,
+                  u.department,
+                  u.title,
+                  u.userRole,
+                  u.status
+                ].join(","))
+              ].join("\n")
+              const blob = new Blob([csv], { type: 'text/csv' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = 'users.csv'
+              a.click()
+            }}
+          >
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
-          <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700">
+          <Button
+            size="lg"
+            onClick={() => setIsAddUserOpen(true)}
+          >
             <UserPlus className="mr-2 h-4 w-4" />
             Add User
           </Button>
@@ -142,11 +187,11 @@ export default function UsersPage() {
 
       {/* Statistics Cards */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card className="border hover:shadow-lg transition-all hover:scale-[1.02]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <div className="rounded-full p-2 bg-indigo-500/10">
-              <Users className="h-4 w-4 text-indigo-600" />
+            <div className="rounded-full p-2 bg-muted">
+              <Users className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
           <CardContent>
@@ -157,45 +202,45 @@ export default function UsersPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card className="border hover:shadow-lg transition-all hover:scale-[1.02]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <div className="rounded-full p-2 bg-green-500/10">
-              <UserCheck className="h-4 w-4 text-green-600" />
+            <div className="rounded-full p-2 bg-muted">
+              <UserCheck className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">{stats.activeUsers}</div>
+            <div className="text-3xl font-bold text-foreground">{stats.activeUsers}</div>
             <p className="text-xs text-muted-foreground mt-1">
               Currently active
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card className="border hover:shadow-lg transition-all hover:scale-[1.02]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">New This Month</CardTitle>
-            <div className="rounded-full p-2 bg-blue-500/10">
-              <TrendingUp className="h-4 w-4 text-blue-600" />
+            <div className="rounded-full p-2 bg-muted">
+              <TrendingUp className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600">{stats.newThisMonth}</div>
+            <div className="text-3xl font-bold text-foreground">{stats.newThisMonth}</div>
             <p className="text-xs text-muted-foreground mt-1">
               Added in last 30 days
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card className="border hover:shadow-lg transition-all hover:scale-[1.02]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Administrators</CardTitle>
-            <div className="rounded-full p-2 bg-purple-500/10">
-              <Shield className="h-4 w-4 text-purple-600" />
+            <div className="rounded-full p-2 bg-muted">
+              <Shield className="h-4 w-4 text-foreground" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-purple-600">{stats.admins}</div>
+            <div className="text-3xl font-bold text-foreground">{stats.admins}</div>
             <p className="text-xs text-muted-foreground mt-1">
               Admin & Super Admin
             </p>
@@ -204,7 +249,7 @@ export default function UsersPage() {
       </div>
 
       {/* Search and Filter Bar */}
-      <Card className="border-2">
+      <Card className="border">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
@@ -216,36 +261,39 @@ export default function UsersPage() {
                 className="pl-10 h-11"
               />
             </div>
-            <select
-              value={filterDepartment}
-              onChange={(e) => setFilterDepartment(e.target.value)}
-              className="flex h-11 w-full md:w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-            >
-              <option value="all">All Departments</option>
-              {departments.slice(1).map((dept) => (
-                <option key={dept} value={dept}>{dept}</option>
-              ))}
-            </select>
-            <select
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-              className="flex h-11 w-full md:w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-            >
-              <option value="all">All Roles</option>
-              {roles.slice(1).map((role) => (
-                <option key={role} value={role}>{role.replace("_", " ")}</option>
-              ))}
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="flex h-11 w-full md:w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
-            </select>
+            <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+              <SelectTrigger className="h-11 w-full md:w-48">
+                <SelectValue placeholder="All Departments" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Departments</SelectItem>
+                {departments.slice(1).map((dept) => (
+                  <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterRole} onValueChange={setFilterRole}>
+              <SelectTrigger className="h-11 w-full md:w-48">
+                <SelectValue placeholder="All Roles" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Roles</SelectItem>
+                {roles.slice(1).map((role) => (
+                  <SelectItem key={role} value={role}>{role.replace("_", " ")}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="h-11 w-full md:w-48">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="suspended">Suspended</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -262,7 +310,7 @@ export default function UsersPage() {
         </TabsList>
 
         <TabsContent value={activeTab} className="mt-6">
-          <Card className="border-2">
+          <Card className="border">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -283,13 +331,13 @@ export default function UsersPage() {
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-3">
                             <div className="relative">
-                              <Avatar className="h-10 w-10 bg-gradient-to-br from-indigo-500 to-violet-500">
+                              <Avatar className="h-10 w-10   ">
                                 <AvatarFallback className="text-white font-semibold">
                                   {getInitials(user.fullName)}
                                 </AvatarFallback>
                               </Avatar>
                               {user.mfaEnabled && (
-                                <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-500 border-2 border-white flex items-center justify-center">
+                                <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-muted border border-white flex items-center justify-center">
                                   <CheckCircle2 className="h-2.5 w-2.5 text-white" />
                                 </div>
                               )}
@@ -324,8 +372,8 @@ export default function UsersPage() {
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-2">
-                            <div className="rounded-full p-1.5 bg-blue-500/10">
-                              <Building2 className="h-3 w-3 text-blue-600" />
+                            <div className="rounded-full p-1.5 bg-muted">
+                              <Building2 className="h-3 w-3 text-foreground" />
                             </div>
                             <span className="text-sm">{user.department}</span>
                           </div>
@@ -351,10 +399,24 @@ export default function UsersPage() {
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="sm">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedUser(user)
+                                setIsViewDetailsOpen(true)
+                              }}
+                            >
                               View Details
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedUser(user)
+                                alert(`More options for: ${user.fullName}\n\n- Edit User\n- Deactivate User\n- Reset Password\n- View Activity Log`)
+                              }}
+                            >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </div>
@@ -384,34 +446,213 @@ export default function UsersPage() {
       </Tabs>
 
       {/* Quick Tips */}
-      <Card className="border-2 border-indigo-200 bg-indigo-50/50 dark:bg-indigo-950/20">
+      <Card className="border border bg-muted dark:bg-muted">
         <CardHeader>
           <CardTitle className="text-base flex items-center">
-            <UserCog className="mr-2 h-5 w-5 text-indigo-600" />
+            <UserCog className="mr-2 h-5 w-5 text-foreground" />
             User Management Tips
           </CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-indigo-600 mt-0.5" />
+              <CheckCircle2 className="h-4 w-4 text-foreground mt-0.5" />
               <span>Use department and role filters to quickly find specific user groups</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-indigo-600 mt-0.5" />
+              <CheckCircle2 className="h-4 w-4 text-foreground mt-0.5" />
               <span>Green checkmark badge indicates MFA-enabled accounts for enhanced security</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-indigo-600 mt-0.5" />
+              <CheckCircle2 className="h-4 w-4 text-foreground mt-0.5" />
               <span>Export user data for compliance reporting and auditing purposes</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-indigo-600 mt-0.5" />
+              <CheckCircle2 className="h-4 w-4 text-foreground mt-0.5" />
               <span>Monitor inactive users and last login times to maintain security hygiene</span>
             </li>
           </ul>
         </CardContent>
       </Card>
+
+      {/* Add User Dialog */}
+      <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New User</DialogTitle>
+            <DialogDescription>
+              Create a new user account with role and department assignment
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  value={newUser.firstName}
+                  onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
+                  placeholder="John"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  value={newUser.lastName}
+                  onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
+                  placeholder="Doe"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={newUser.email}
+                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                placeholder="john.doe@company.com"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="department">Department</Label>
+                <Select value={newUser.department} onValueChange={(value) => setNewUser({ ...newUser, department: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.filter(d => d !== "all").map((dept) => (
+                      <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={newUser.title}
+                  onChange={(e) => setNewUser({ ...newUser, title: e.target.value })}
+                  placeholder="Software Engineer"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="userRole">User Role</Label>
+                <Select value={newUser.userRole} onValueChange={(value) => setNewUser({ ...newUser, userRole: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="end_user">End User</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="dept_admin">Department Admin</SelectItem>
+                    <SelectItem value="role_admin">Role Admin</SelectItem>
+                    <SelectItem value="audit_viewer">Audit Viewer</SelectItem>
+                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={newUser.status} onValueChange={(value) => setNewUser({ ...newUser, status: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddUserOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              console.log("Creating user:", newUser)
+              alert(`User ${newUser.firstName} ${newUser.lastName} created successfully!`)
+              setIsAddUserOpen(false)
+              setNewUser({
+                firstName: "",
+                lastName: "",
+                email: "",
+                department: "",
+                title: "",
+                userRole: "end_user",
+                status: "active"
+              })
+            }}>
+              Create User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View User Details Dialog */}
+      <Dialog open={isViewDetailsOpen} onOpenChange={setIsViewDetailsOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>User Details</DialogTitle>
+            <DialogDescription>
+              View detailed information about this user
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  <AvatarFallback className="text-lg">
+                    {getInitials(selectedUser.fullName)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="text-lg font-semibold">{selectedUser.fullName}</h3>
+                  <p className="text-sm text-muted-foreground">{selectedUser.title}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Email</Label>
+                  <p className="text-sm">{selectedUser.email}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Department</Label>
+                  <p className="text-sm">{selectedUser.department}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Phone</Label>
+                  <p className="text-sm">{selectedUser.phone || "N/A"}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">User Role</Label>
+                  <Badge>{selectedUser.userRole.replace("_", " ")}</Badge>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Status</Label>
+                  <Badge variant={selectedUser.status === "active" ? "default" : "secondary"}>
+                    {selectedUser.status}
+                  </Badge>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Last Login</Label>
+                  <p className="text-sm">{selectedUser.lastLogin ? formatDate(selectedUser.lastLogin) : "Never"}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsViewDetailsOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

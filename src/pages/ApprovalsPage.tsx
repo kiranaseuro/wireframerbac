@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { formatDate } from "@/lib/utils"
 import {
   CheckCircle,
@@ -18,8 +19,6 @@ import {
   User,
   Calendar,
   FileText,
-  TrendingUp,
-  Zap,
   MessageSquare,
   History,
   ChevronRight,
@@ -164,17 +163,16 @@ export default function ApprovalsPage() {
     <div className="space-y-6 pb-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
             Approval Center
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-muted-foreground">
             Review and manage access requests from your team
           </p>
         </div>
         {user?.userRole === "super_admin" && (
-          <Badge variant="destructive" className="h-8">
-            <Zap className="mr-1 h-3 w-3" />
+          <Badge variant="destructive">
             Admin View
           </Badge>
         )}
@@ -182,61 +180,53 @@ export default function ApprovalsPage() {
 
       {/* Statistics Cards */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Pending</CardTitle>
-            <div className="rounded-full p-2 bg-blue-500/10">
-              <ListChecks className="h-4 w-4 text-blue-600" />
-            </div>
+            <ListChecks className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <div className="text-2xl font-bold">{stats.total}</div>
+            <p className="text-xs text-muted-foreground">
               Awaiting your review
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Urgent</CardTitle>
-            <div className="rounded-full p-2 bg-red-500/10">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-            </div>
+            <AlertCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-red-600">{stats.urgent}</div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <div className="text-2xl font-bold">{stats.urgent}</div>
+            <p className="text-xs text-muted-foreground">
               Require immediate attention
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Today</CardTitle>
-            <div className="rounded-full p-2 bg-green-500/10">
-              <Calendar className="h-4 w-4 text-green-600" />
-            </div>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">{stats.today}</div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <div className="text-2xl font-bold">{stats.today}</div>
+            <p className="text-xs text-muted-foreground">
               Submitted today
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 hover:shadow-lg transition-all hover:scale-[1.02]">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-            <div className="rounded-full p-2 bg-orange-500/10">
-              <Timer className="h-4 w-4 text-orange-600" />
-            </div>
+            <Timer className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-orange-600">{stats.overdue}</div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <div className="text-2xl font-bold">{stats.overdue}</div>
+            <p className="text-xs text-muted-foreground">
               Older than 3 days
             </p>
           </CardContent>
@@ -244,7 +234,7 @@ export default function ApprovalsPage() {
       </div>
 
       {/* Search and Filters */}
-      <Card className="border-2">
+      <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
@@ -256,17 +246,18 @@ export default function ApprovalsPage() {
                 className="pl-10 h-11"
               />
             </div>
-            <select
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-              className="flex h-11 w-full md:w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-            >
-              <option value="all">All Priorities</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
+            <Select value={filterPriority} onValueChange={setFilterPriority}>
+              <SelectTrigger className="h-11 w-full md:w-48">
+                <SelectValue placeholder="All Priorities" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="urgent">Urgent</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="low">Low</SelectItem>
+              </SelectContent>
+            </Select>
             {selectedItems.length > 0 && (
               <Button
                 variant="outline"
@@ -283,19 +274,18 @@ export default function ApprovalsPage() {
 
       {/* Bulk Actions Bar */}
       {selectedItems.length > 0 && (
-        <Alert className="border-2 border-purple-200 bg-purple-50 dark:bg-purple-950/20">
+        <Alert>
           <AlertDescription className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <CheckSquare className="h-5 w-5 text-purple-600" />
-              <span className="font-semibold text-purple-900 dark:text-purple-100">
+            <div className="flex items-center gap-2">
+              <CheckSquare className="h-4 w-4" />
+              <span className="font-medium">
                 {selectedItems.length} request{selectedItems.length > 1 ? "s" : ""} selected
               </span>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
               <Button
                 size="sm"
                 onClick={handleBulkApprove}
-                className="bg-green-600 hover:bg-green-700"
               >
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Approve All
@@ -335,11 +325,9 @@ export default function ApprovalsPage() {
                 filteredRequests.map((request) => (
                   <Card
                     key={request.id}
-                    className={`border-2 transition-all hover:shadow-lg ${
+                    className={`${
                       selectedRequest === request.id
-                        ? "border-purple-500 shadow-lg"
-                        : selectedItems.includes(request.id)
-                        ? "border-blue-300"
+                        ? "border-primary"
                         : ""
                     }`}
                   >
@@ -352,7 +340,7 @@ export default function ApprovalsPage() {
                             onChange={() => toggleSelectItem(request.id)}
                             className="mt-1 h-5 w-5 rounded border-input cursor-pointer"
                           />
-                          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center font-semibold flex-shrink-0">
                             {request.requesterName
                               .split(" ")
                               .map((n) => n[0])
@@ -383,20 +371,20 @@ export default function ApprovalsPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        <div className="flex items-start space-x-2 p-3 rounded-lg bg-muted/50">
-                          <FileText className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                          <div className="flex-1">
-                            <p className="text-sm font-semibold">Requested Access:</p>
+                        <div className="flex items-start gap-2 p-3 rounded-md border">
+                          <FileText className="h-4 w-4 mt-0.5" />
+                          <div>
+                            <p className="text-sm font-medium">Requested Access:</p>
                             <p className="text-sm text-muted-foreground">
                               {request.itemName}
                             </p>
                           </div>
                         </div>
 
-                        <div className="flex items-start space-x-2 p-3 rounded-lg bg-muted/50">
-                          <MessageSquare className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                          <div className="flex-1">
-                            <p className="text-sm font-semibold">Justification:</p>
+                        <div className="flex items-start gap-2 p-3 rounded-md border">
+                          <MessageSquare className="h-4 w-4 mt-0.5" />
+                          <div>
+                            <p className="text-sm font-medium">Justification:</p>
                             <p className="text-sm text-muted-foreground">
                               {request.justification}
                             </p>
@@ -416,19 +404,18 @@ export default function ApprovalsPage() {
                           )}
                         </div>
 
-                        <div className="flex space-x-2 pt-2">
+                        <div className="flex gap-2 pt-2">
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 hover:bg-blue-50 dark:hover:bg-blue-950"
+                            className="flex-1"
                             onClick={() => setSelectedRequest(request.id)}
                           >
                             <ChevronRight className="mr-2 h-4 w-4" />
-                            Review Details
+                            Review
                           </Button>
                           <Button
                             size="sm"
-                            className="bg-green-600 hover:bg-green-700"
                             onClick={() => handleApprove(request.id)}
                           >
                             <CheckCircle className="mr-2 h-4 w-4" />
@@ -448,19 +435,13 @@ export default function ApprovalsPage() {
                   </Card>
                 ))
               ) : (
-                <Card className="border-2">
-                  <CardContent className="py-16 text-center">
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center">
-                        <CheckCircle className="h-8 w-8 text-green-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold">All caught up!</h3>
-                        <p className="text-muted-foreground">
-                          No pending approvals at the moment
-                        </p>
-                      </div>
-                    </div>
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <CheckCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="font-semibold mb-2">All caught up!</h3>
+                    <p className="text-sm text-muted-foreground">
+                      No pending approvals at the moment
+                    </p>
                   </CardContent>
                 </Card>
               )}
@@ -468,7 +449,7 @@ export default function ApprovalsPage() {
 
             {/* Approval Action Panel */}
             <div>
-              <Card className="sticky top-6 border-2">
+              <Card className="sticky top-6">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     {selectedRequest ? (
@@ -493,9 +474,9 @@ export default function ApprovalsPage() {
                   {selectedRequest && selectedRequestData ? (
                     <div className="space-y-4">
                       {/* Selected Request Summary */}
-                      <div className="p-4 rounded-lg bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 border-2 border-purple-200 dark:border-purple-800">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                      <div className="p-4 rounded-md border">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center font-semibold text-sm">
                             {selectedRequestData.requesterName
                               .split(" ")
                               .map((n) => n[0])
@@ -543,17 +524,17 @@ export default function ApprovalsPage() {
                       <div className="space-y-2">
                         <Button
                           onClick={() => handleApprove()}
-                          className="w-full h-11 bg-green-600 hover:bg-green-700 font-semibold"
+                          className="w-full"
                         >
-                          <CheckCircle className="mr-2 h-5 w-5" />
+                          <CheckCircle className="mr-2 h-4 w-4" />
                           Approve Request
                         </Button>
                         <Button
                           onClick={() => handleReject()}
                           variant="destructive"
-                          className="w-full h-11 font-semibold"
+                          className="w-full"
                         >
-                          <XCircle className="mr-2 h-5 w-5" />
+                          <XCircle className="mr-2 h-4 w-4" />
                           Reject Request
                         </Button>
                         <Button
@@ -566,27 +547,21 @@ export default function ApprovalsPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="py-12 text-center space-y-4">
-                      <div className="h-16 w-16 rounded-full bg-muted mx-auto flex items-center justify-center">
-                        <User className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">No request selected</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Click on a request to review and take action
-                        </p>
-                      </div>
+                    <div className="py-8 text-center">
+                      <User className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-sm font-medium">No request selected</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Click on a request to review and take action
+                      </p>
                       {stats.urgent > 0 && (
-                        <div className="pt-4">
-                          <Alert className="border-red-200 bg-red-50 dark:bg-red-950/20">
-                            <AlertCircle className="h-4 w-4 text-red-600" />
-                            <AlertDescription className="text-red-900 dark:text-red-100">
-                              <strong>{stats.urgent}</strong> urgent request
-                              {stats.urgent > 1 ? "s" : ""} need
-                              {stats.urgent === 1 ? "s" : ""} your attention
-                            </AlertDescription>
-                          </Alert>
-                        </div>
+                        <Alert className="mt-4">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertDescription>
+                            <strong>{stats.urgent}</strong> urgent request
+                            {stats.urgent > 1 ? "s" : ""} need
+                            {stats.urgent === 1 ? "s" : ""} your attention
+                          </AlertDescription>
+                        </Alert>
                       )}
                     </div>
                   )}
@@ -594,24 +569,21 @@ export default function ApprovalsPage() {
               </Card>
 
               {/* Quick Tips */}
-              <Card className="mt-4 border-2 border-blue-200 bg-blue-50/50 dark:bg-blue-950/20">
+              <Card className="mt-4">
                 <CardHeader>
-                  <CardTitle className="text-sm flex items-center">
-                    <TrendingUp className="mr-2 h-4 w-4 text-blue-600" />
-                    Quick Tips
-                  </CardTitle>
+                  <CardTitle className="text-sm">Quick Tips</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-xs text-muted-foreground">
-                  <div className="flex items-start space-x-2">
-                    <span className="text-blue-600">•</span>
+                  <div className="flex items-start gap-2">
+                    <span>•</span>
                     <span>Use bulk actions to approve multiple requests at once</span>
                   </div>
-                  <div className="flex items-start space-x-2">
-                    <span className="text-blue-600">•</span>
+                  <div className="flex items-start gap-2">
+                    <span>•</span>
                     <span>Filter by priority to focus on urgent items first</span>
                   </div>
-                  <div className="flex items-start space-x-2">
-                    <span className="text-blue-600">•</span>
+                  <div className="flex items-start gap-2">
+                    <span>•</span>
                     <span>Add comments to provide feedback to requesters</span>
                   </div>
                 </CardContent>
