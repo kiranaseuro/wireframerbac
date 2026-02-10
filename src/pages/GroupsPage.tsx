@@ -22,7 +22,8 @@ import {
   MoreVertical,
   ShieldCheck,
   FolderSync,
-  MapPin
+  MapPin,
+  Shield
 } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 

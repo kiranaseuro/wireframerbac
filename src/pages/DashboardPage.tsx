@@ -11,8 +11,7 @@ import {
   CheckCircle,
   Clock,
   TrendingUp,
-  ShieldAlert,
-  Lock
+  ShieldAlert
 } from "lucide-react"
 
 export default function DashboardPage() {

@@ -40,7 +40,6 @@ export default function RolesPage() {
   // Dialog states
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
-  const [selectedRole, setSelectedRole] = useState<any>(null)
 
   // Form state
   const [roleForm, setRoleForm] = useState({
@@ -391,7 +390,6 @@ export default function RolesPage() {
                       size="sm"
                       className="flex-1"
                       onClick={() => {
-                        setSelectedRole(role)
                         setRoleForm({
                           name: role.name,
                           description: role.description,
