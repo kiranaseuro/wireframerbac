@@ -318,12 +318,12 @@ export default function MyAccessPage() {
                       <div>
                         <div className="font-medium">{permission.name}</div>
                         <div className="text-xs text-muted-foreground">
-                          {permission.application}
+                          {permission.applicationCode} • {permission.environment}
                         </div>
                       </div>
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      {permission.type}
+                      {permission.action}
                     </Badge>
                   </div>
                 ))}
@@ -412,19 +412,19 @@ export default function MyAccessPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-sm">{permission.application}</td>
+                        <td className="px-4 py-4 text-sm">{permission.applicationCode}</td>
                         <td className="px-4 py-4">
-                          <Badge variant="outline">{permission.type}</Badge>
+                          <Badge variant="outline">{permission.action}</Badge>
                         </td>
                         <td className="px-4 py-4">
                           <Badge
                             variant={
-                              permission.dataClassification === "restricted" ? "destructive" :
-                              permission.dataClassification === "confidential" ? "default" :
+                              permission.environment === "PROD" ? "destructive" :
+                              permission.environment === "UAT" ? "default" :
                               "secondary"
                             }
                           >
-                            {permission.dataClassification}
+                            {permission.environment}
                           </Badge>
                         </td>
                         <td className="px-4 py-4">

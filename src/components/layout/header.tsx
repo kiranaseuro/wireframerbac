@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { getInitials, formatRelativeTime } from "@/lib/utils"
 import { useNavigate } from "react-router-dom"
+import RoleSwitcher from "./role-switcher"
 
 export default function Header() {
   const navigate = useNavigate()
@@ -24,25 +25,29 @@ export default function Header() {
 
   if (!user) return null
 
+  // RGD-Compliant Role Labels (Section 7.1)
   const roleLabels: Record<string, string> = {
+    IT_ADMIN: "IT Administrator",
+    SUB_ADMIN: "Sub Administrator",
+    AUDITOR: "Auditor",
+    APP1_PROD_VIEWER: "APP1 Production Viewer",
+    APP1_DEV_DEVELOPER: "APP1 Development Developer",
+    APP2_QA_TESTER: "APP2 QA Tester",
+    // Legacy roles (if any)
     user: "End User",
     manager: "Manager",
-    dept_admin: "Department Admin",
-    role_admin: "Role Admin",
-    permission_admin: "Permission Admin",
-    audit_viewer: "Audit Viewer",
-    help_desk: "Help Desk",
-    super_admin: "Super Admin",
   }
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-card px-6">
       <div className="flex items-center gap-4">
         <h2 className="text-lg font-semibold text-foreground">Welcome, {user.firstName}!</h2>
-        <Badge variant="secondary">{roleLabels[user.userRole]}</Badge>
+        <Badge variant="secondary">{roleLabels[user.userRole] || user.userRole}</Badge>
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Role Switcher - For Testing Only */}
+        <RoleSwitcher />
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -65,11 +65,22 @@ export const useAuthStore = create<AuthState>()(
       },
 
       autoLogin: () => {
-        // Auto-login as alice.admin@fmg.com (super admin) to access all sections
-        const superAdmin = demoUsers.find((u) => u.email === "alice.admin@fmg.com")
-        if (superAdmin) {
+        // Check if user already exists (restored from localStorage by persist middleware)
+        const { user, isAuthenticated } = get()
+
+        // Only auto-login if there's no existing user session
+        // This allows role switching to persist across page reloads
+        if (user && isAuthenticated) {
+          console.log("✅ User session restored:", user.fullName, "-", user.userRole)
+          return // User already logged in, don't override
+        }
+
+        // First-time login: Auto-login as alice.admin@fmg.com (IT_ADMIN role)
+        console.log("🔐 Auto-login: Setting default user (IT_ADMIN)")
+        const itAdmin = demoUsers.find((u) => u.email === "alice.admin@fmg.com")
+        if (itAdmin) {
           set({
-            user: { ...superAdmin, lastLogin: new Date() },
+            user: { ...itAdmin, lastLogin: new Date() },
             isAuthenticated: true,
           })
         }

@@ -1,6 +1,32 @@
+// ============================================================================
+// RBAC TYPE DEFINITIONS - ALIGNED WITH RGD v3.0
+// ============================================================================
+// This file defines types according to the Pure RBAC Requirements Gathering
+// Document with Active Directory Integration via SAML
+// ============================================================================
+
+// Environment Types (RGD Section 8.1)
+export type Environment = "DEV" | "QA" | "UAT" | "PROD"
+
+// Application Code Types (RGD Section 8.2)
+export type ApplicationCode = "APP1" | "APP2" | "APP3" | "ADMIN"
+
+// Permission Action Types (RGD Section 8.3)
+export type PermissionAction = "CREATE" | "READ" | "UPDATE" | "DELETE" | "EXECUTE"
+
 // User Types
 export type UserStatus = "active" | "inactive" | "suspended" | "terminated"
-export type UserRole = "user" | "manager" | "dept_admin" | "role_admin" | "permission_admin" | "audit_viewer" | "help_desk" | "super_admin"
+
+// User Role Types (RGD Section 7.1)
+// Primary administrative roles: IT_ADMIN (full access) and SUB_ADMIN (DEV/QA only)
+// Custom application roles follow pattern: {APP}_{ENV}_{FUNCTION}
+export type UserRole =
+  | "IT_ADMIN"           // Full access to ALL environments (RGD Section 7.1.1)
+  | "SUB_ADMIN"          // Limited to DEV and QA ONLY (RGD Section 7.1.2)
+  | "APP1_PROD_VIEWER"   // Example custom role: Read-only APP1 production access
+  | "APP1_DEV_DEVELOPER" // Example custom role: Full APP1 development access
+  | "APP2_QA_TESTER"     // Example custom role: QA testing access
+  | "AUDITOR"            // Read-only audit access (RGD Section 4.3)
 
 export interface User {
   id: string
@@ -21,95 +47,53 @@ export interface User {
   createdAt: Date
   lastLogin?: Date
   mfaEnabled: boolean
-  // Active Directory fields
+  // Active Directory fields (RGD Section 5.2.3)
   adSynced?: boolean
   adGroups?: string[]
   username?: string
   jobTitle?: string
 }
 
-// Role Types
+// Role Types (RGD Section 7)
 export type RoleStatus = "active" | "inactive" | "deprecated"
 
 export interface Role {
   id: string
-  name: string
-  code: string
+  name: string              // Human-readable name (e.g., "IT Administrator")
+  code: string              // Role code (e.g., "IT_ADMIN", "SUB_ADMIN")
   description: string
   department: string
   level: string
   status: RoleStatus
   parentRoleId?: string
-  permissions: string[]
+  permissions: string[]     // Array of permission names (e.g., ["APP1_PROD_READ", "APP2_DEV_CREATE"])
   userCount: number
   createdAt: Date
   updatedAt: Date
   createdBy: string
+  // Temporal role assignment support (RGD FR-RM-005)
   isTemporal: boolean
+  temporalStartDate?: Date
+  temporalEndDate?: Date
 }
 
-// Permission Types
-export type PermissionType = "read" | "write" | "delete" | "execute" | "create" | "update" | "approve" | "admin"
-export type DataClassification = "public" | "internal" | "confidential" | "restricted"
-
+// Permission Types (RGD Section 8.2, FR-PM-001)
+// Permission naming convention: {APPLICATION_CODE}_{ENVIRONMENT}_{ACTION}
+// Examples: APP1_DEV_READ, APP2_PROD_EXECUTE, ADMIN_PROD_DELETE
 export interface Permission {
   id: string
-  name: string
-  code: string
+  name: string              // Auto-generated: {APP}_{ENV}_{ACTION} (e.g., "APP1_PROD_READ")
   description: string
-  type: PermissionType
-  resource: string
-  application: string
-  module: string
-  dataClassification: DataClassification
-  inheritable: boolean
-  allowOverride: boolean
+  applicationCode: ApplicationCode   // APP1, APP2, APP3, ADMIN
+  environment: Environment           // DEV, QA, UAT, PROD
+  action: PermissionAction           // CREATE, READ, UPDATE, DELETE, EXECUTE
+  resource?: string                  // Optional: specific resource protected
   createdAt: Date
+  updatedAt?: Date
+  createdBy: string
 }
 
-// Access Request Types
-export type RequestStatus = "pending" | "approved" | "rejected" | "in_progress" | "completed" | "cancelled"
-export type RequestPriority = "standard" | "urgent"
-export type RequestType = "role" | "permission" | "application"
-
-export interface AccessRequest {
-  id: string
-  requesterId: string
-  requesterName: string
-  requesterEmail: string
-  type: RequestType
-  itemId: string
-  itemName: string
-  justification: string
-  priority: RequestPriority
-  status: RequestStatus
-  isTemporary: boolean
-  startDate?: Date
-  endDate?: Date
-  requestedAt: Date
-  approvers: Approver[]
-  comments: Comment[]
-}
-
-export interface Approver {
-  id: string
-  name: string
-  email: string
-  role: string
-  status: "pending" | "approved" | "rejected"
-  comments?: string
-  decidedAt?: Date
-}
-
-export interface Comment {
-  id: string
-  userId: string
-  userName: string
-  text: string
-  createdAt: Date
-}
-
-// Group Types
+// Group Types (RGD Section 5.2.3)
 export type GroupType = "security" | "distribution"
 export type GroupSource = "ad" | "manual"
 export type SyncStatus = "synced" | "pending" | "error"
@@ -120,16 +104,44 @@ export interface Group {
   type: GroupType
   source: GroupSource
   memberCount: number
-  mappedRoleId?: string
+  mappedRoleId?: string      // Role automatically assigned to group members
   mappedRoleName?: string
   lastSynced?: Date
   syncStatus: SyncStatus
   description?: string
 }
 
-// Audit Log Types
-export type AuditEventType = "authentication" | "authorization" | "role_change" | "permission_change" | "admin_action" | "access_request" | "approval" | "login" | "logout" | "access_granted" | "access_denied" | "role_modified" | "permission_granted" | "user_created"
-export type AuditResult = "success" | "failure"
+// AD Group Mapping (RGD Section 5.2.3)
+export interface ADGroupMapping {
+  id: string
+  adGroupName: string        // Active Directory security group name
+  rbacRoleId: string         // RBAC role ID to map to
+  rbacRoleName: string       // RBAC role name
+  autoAssign: boolean        // Auto-assign role when user synced from AD
+  userCount: number          // Number of users with this mapping
+  lastSynced?: Date
+  createdAt: Date
+  createdBy: string
+}
+
+// Audit Log Types (RGD Section 11)
+export type AuditEventType =
+  | "authentication"       // SAML authentication events (RGD AUD-001)
+  | "authorization"        // Authorization decisions (RGD AUD-002)
+  | "role_change"         // Role assignments/removals (RGD AUD-003)
+  | "permission_change"   // Permission modifications (RGD AUD-003)
+  | "admin_action"        // Administrative actions (RGD AUD-003)
+  | "user_lifecycle"      // User creation/deactivation (RGD AUD-004)
+  | "security_violation"  // SUB_ADMIN UAT/PROD access attempts (RGD AUD-002)
+  | "login"
+  | "logout"
+  | "access_granted"
+  | "access_denied"
+  | "role_modified"
+  | "permission_granted"
+  | "user_created"
+
+export type AuditResult = "success" | "failure" | "denied"
 
 export interface AuditLog {
   id: string
@@ -137,14 +149,16 @@ export interface AuditLog {
   eventType: AuditEventType
   userId: string
   userName: string
-  action: string
-  resource: string
+  action: string            // Detailed action description
+  resource: string          // Resource affected
   result: AuditResult
   ipAddress: string
+  denialReason?: string     // Required for authorization denials (RGD Section 11.2)
+  environment?: Environment // Environment for authorization events
   details: Record<string, any>
 }
 
-// Report Types
+// Report Types (RGD Section 11.5)
 export type ReportCategory = "access" | "compliance" | "security" | "operational"
 export type ReportFrequency = "on_demand" | "daily" | "weekly" | "monthly" | "quarterly"
 
@@ -178,11 +192,19 @@ export interface AccessItem {
   expiresDate?: Date
   status: AccessItemStatus
   grantedBy: string
-  source: string
+  source: string            // "direct", "role", "ad_group"
+  environment?: Environment // For environment-specific access
 }
 
-// Notification Types
-export type NotificationType = "approval_required" | "request_approved" | "request_rejected" | "access_expiring" | "access_expired" | "system" | "security"
+// Notification Types (RGD Section 2.1.4 - Email Notifications)
+// NOTE: Approval notifications removed (workflow out of scope per RGD Section 3)
+export type NotificationType =
+  | "access_expiring"      // Role expiration warning (RGD FR-RM-005)
+  | "access_expired"       // Role expired notification
+  | "system"               // System notifications
+  | "security"             // Security alerts (RGD Section 11.3)
+  | "role_assigned"        // Role assignment confirmation
+  | "role_removed"         // Role removal notification
 
 export interface Notification {
   id: string
@@ -210,6 +232,8 @@ export interface TableFilters {
   status?: string
   department?: string
   role?: string
+  environment?: Environment
+  applicationCode?: ApplicationCode
   dateRange?: {
     from: Date
     to: Date
@@ -234,4 +258,50 @@ export interface PaginatedResponse<T> {
   page: number
   pageSize: number
   totalPages: number
+}
+
+// Authorization Request/Response Types (RGD Section 6.4, FR-AZ-001)
+export interface AuthorizationRequest {
+  userId: string
+  applicationCode: ApplicationCode
+  environment: Environment
+  action: PermissionAction
+}
+
+export interface AuthorizationResponse {
+  decision: "ALLOW" | "DENY"
+  userId: string
+  roles: UserRole[]
+  timestamp: Date
+  reason?: string           // Required for DENY decisions
+  requiredPermission?: string  // e.g., "APP1_PROD_UPDATE"
+}
+
+// Environment Access Helper Types
+export interface EnvironmentAccess {
+  environment: Environment
+  hasAccess: boolean
+  roles: UserRole[]
+}
+
+// Permission Creation Form (for UI)
+export interface PermissionFormData {
+  applicationCode: ApplicationCode
+  environment: Environment
+  action: PermissionAction
+  description: string
+  resource?: string
+}
+
+// Role Assignment with Temporal Support (RGD FR-RM-005)
+export interface RoleAssignment {
+  userId: string
+  roleId: string
+  roleName: string
+  assignedBy: string
+  assignedAt: Date
+  startDate?: Date
+  endDate?: Date
+  isTemporary: boolean
+  source: "manual" | "ad_group"  // How the role was assigned
 }

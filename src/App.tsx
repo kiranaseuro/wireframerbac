@@ -6,9 +6,6 @@ import { useNotificationStore } from "./stores/notification-store"
 // Pages
 import DashboardPage from "./pages/DashboardPage"
 import MyAccessPage from "./pages/MyAccessPage"
-import RequestAccessPage from "./pages/RequestAccessPage"
-import MyRequestsPage from "./pages/MyRequestsPage"
-import ApprovalsPage from "./pages/ApprovalsPage"
 import UsersPage from "./pages/UsersPage"
 import RolesPage from "./pages/RolesPage"
 import PermissionsPage from "./pages/PermissionsPage"
@@ -16,11 +13,17 @@ import GroupsPage from "./pages/GroupsPage"
 import AuditLogsPage from "./pages/AuditLogsPage"
 import ReportsPage from "./pages/ReportsPage"
 import NotificationSettingsPage from "./pages/NotificationSettingsPage"
-// New Wireframe Pages
+// Admin Pages
 import ADSyncPage from "./pages/ADSyncPage"
 import PermissionDetailPage from "./pages/PermissionDetailPage"
 import SuperAdminDashboard from "./pages/SuperAdminDashboard"
 import GroupMappingPage from "./pages/GroupMappingPage"
+
+// ============================================================================
+// WORKFLOW PAGES REMOVED (RGD Section 3 - Out of Scope)
+// - RequestAccessPage, MyRequestsPage, ApprovalsPage removed
+// - Access requests handled via external HR/IT ticketing systems
+// ============================================================================
 
 // Layout
 import AppLayout from "./components/layout/app-layout"
@@ -57,9 +60,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="my-access" element={<MyAccessPage />} />
-          <Route path="request-access" element={<RequestAccessPage />} />
-          <Route path="my-requests" element={<MyRequestsPage />} />
-          <Route path="approvals" element={<ApprovalsPage />} />
+          {/* Workflow routes REMOVED - out of scope per RGD Section 3 */}
           <Route path="users" element={<UsersPage />} />
           <Route path="roles" element={<RolesPage />} />
           <Route path="permissions" element={<PermissionsPage />} />
@@ -67,7 +68,7 @@ function App() {
           <Route path="audit-logs" element={<AuditLogsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="notification-settings" element={<NotificationSettingsPage />} />
-          {/* New Wireframe Routes */}
+          {/* Admin Routes */}
           <Route path="ad-sync" element={<ADSyncPage />} />
           <Route path="permission-detail" element={<PermissionDetailPage />} />
           <Route path="super-admin" element={<SuperAdminDashboard />} />

@@ -68,7 +68,7 @@ export default function UsersPage() {
       filtered = filtered.filter((u) => u.status === "inactive")
     } else if (activeTab === "admins") {
       filtered = filtered.filter((u) =>
-        u.userRole.includes("admin") || u.userRole === "super_admin"
+        u.userRole === "IT_ADMIN" || u.userRole === "SUB_ADMIN"
       )
     }
 
@@ -110,7 +110,7 @@ export default function UsersPage() {
       return new Date(u.createdAt) > thirtyDaysAgo
     }).length,
     admins: mockData.users.filter((u) =>
-      u.userRole.includes("admin") || u.userRole === "super_admin"
+      u.userRole === "IT_ADMIN" || u.userRole === "SUB_ADMIN"
     ).length
   }
 
@@ -128,9 +128,9 @@ export default function UsersPage() {
   }
 
   const getRoleColor = (role: string) => {
-    if (role === "super_admin") return "bg-muted text-foreground border"
-    if (role.includes("admin")) return "bg-muted text-foreground border"
-    if (role === "manager") return "bg-muted text-foreground border"
+    if (role === "IT_ADMIN") return "bg-red-500/10 text-red-600 border-red-200"
+    if (role === "SUB_ADMIN") return "bg-orange-500/10 text-orange-600 border-orange-200"
+    if (role === "AUDITOR") return "bg-blue-500/10 text-blue-600 border-blue-200"
     if (role === "auditor" || role === "audit_viewer") return "bg-muted text-foreground border"
     return "bg-gray-500/10 text-gray-600 border-gray-200"
   }
@@ -345,7 +345,7 @@ export default function UsersPage() {
                             <div>
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">{user.fullName}</p>
-                                {user.userRole === "super_admin" && (
+                                {user.userRole === "IT_ADMIN" && (
                                   <Badge variant="destructive" className="text-xs">
                                     <Shield className="mr-1 h-2.5 w-2.5" />
                                     Super Admin
@@ -550,9 +550,12 @@ export default function UsersPage() {
                     <SelectItem value="end_user">End User</SelectItem>
                     <SelectItem value="manager">Manager</SelectItem>
                     <SelectItem value="dept_admin">Department Admin</SelectItem>
-                    <SelectItem value="role_admin">Role Admin</SelectItem>
-                    <SelectItem value="audit_viewer">Audit Viewer</SelectItem>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                    <SelectItem value="IT_ADMIN">IT Administrator</SelectItem>
+                    <SelectItem value="SUB_ADMIN">Sub Administrator (DEV/QA Only)</SelectItem>
+                    <SelectItem value="AUDITOR">Auditor</SelectItem>
+                    <SelectItem value="APP1_PROD_VIEWER">APP1 Production Viewer</SelectItem>
+                    <SelectItem value="APP1_DEV_DEVELOPER">APP1 Development Developer</SelectItem>
+                    <SelectItem value="APP2_QA_TESTER">APP2 QA Tester</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

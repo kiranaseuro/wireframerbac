@@ -4,9 +4,6 @@ import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
   Key,
-  FileCheck,
-  ClipboardList,
-  CheckSquare,
   Users,
   Shield,
   Lock,
@@ -37,81 +34,83 @@ const navigation: NavItem[] = [
     label: "My Access",
     icon: Key,
   },
-  {
-    to: "/request-access",
-    label: "Request Access",
-    icon: FileCheck,
-  },
-  {
-    to: "/my-requests",
-    label: "My Requests",
-    icon: ClipboardList,
-  },
-  {
-    to: "/approvals",
-    label: "Approvals",
-    icon: CheckSquare,
-    roles: ["manager", "dept_admin", "super_admin"],
-  },
+  // ============================================================================
+  // WORKFLOW PAGES REMOVED (RGD Section 3 - Out of Scope)
+  // - Request Access, My Requests, Approvals are handled via external
+  //   HR/IT ticketing systems per organizational decision
+  // ============================================================================
+
+  // ============================================================================
+  // ADMIN PAGES - Both IT_ADMIN and SUB_ADMIN have access (RGD Section 7.1)
+  // SUB_ADMIN has same administrative capabilities as IT_ADMIN
+  // ONLY difference: Environment restrictions (DEV/QA only, no UAT/PROD)
+  // Environment restrictions are enforced INSIDE the pages, not in navigation
+  // ============================================================================
   {
     to: "/users",
     label: "Users",
     icon: Users,
-    roles: ["dept_admin", "super_admin", "help_desk"],
+    roles: ["IT_ADMIN", "SUB_ADMIN"],
   },
   {
     to: "/roles",
     label: "Roles",
     icon: Shield,
-    roles: ["role_admin", "super_admin"],
+    roles: ["IT_ADMIN", "SUB_ADMIN"], // SUB_ADMIN can manage roles
   },
   {
     to: "/permissions",
     label: "Permissions",
     icon: Lock,
-    roles: ["permission_admin", "super_admin"],
+    roles: ["IT_ADMIN", "SUB_ADMIN"], // SUB_ADMIN can manage permissions (DEV/QA only)
   },
   {
     to: "/groups",
     label: "Groups",
     icon: UserCog,
-    roles: ["super_admin", "dept_admin"],
+    roles: ["IT_ADMIN", "SUB_ADMIN"], // SUB_ADMIN can manage groups
   },
   {
     to: "/audit-logs",
     label: "Audit Logs",
     icon: FileText,
-    roles: ["audit_viewer", "super_admin"],
+    roles: ["AUDITOR", "IT_ADMIN", "SUB_ADMIN"], // SUB_ADMIN can view audit logs
   },
   {
     to: "/reports",
     label: "Reports",
     icon: BarChart3,
-    roles: ["manager", "dept_admin", "audit_viewer", "super_admin"],
+    roles: ["AUDITOR", "IT_ADMIN", "SUB_ADMIN"], // SUB_ADMIN can view reports
   },
+
+  // ============================================================================
+  // IT_ADMIN-ONLY PAGES (RGD Section 7.1.1)
+  // These are high-level system administration pages
+  // SUB_ADMIN does NOT have access to these
+  // ============================================================================
   {
     to: "/super-admin",
     label: "Super Admin",
     icon: ShieldAlert,
-    roles: ["super_admin"],
+    roles: ["IT_ADMIN"], // IT_ADMIN only - system-wide dashboard
   },
   {
     to: "/ad-sync",
     label: "AD Sync",
     icon: RefreshCw,
-    roles: ["super_admin"],
+    roles: ["IT_ADMIN"], // IT_ADMIN only - Active Directory sync
   },
   {
     to: "/group-mapping",
     label: "Group Mapping",
     icon: Settings,
-    roles: ["super_admin"],
+    roles: ["IT_ADMIN", "SUB_ADMIN"], // Both can map - SUB_ADMIN limited to DEV/QA environments
   },
   {
     to: "/permission-detail",
     label: "Permission Details",
     icon: Lock,
-    roles: ["super_admin", "permission_admin"],
+    roles: ["IT_ADMIN", "SUB_ADMIN"], // Both can view permission details
   },
 ]
 
